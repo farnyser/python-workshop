@@ -61,26 +61,58 @@ def partition(A, lo, hi):
         A[i] = A[j]
         A[j] = tmp
 
+def bucketsort(A):
+    min = max = None
+    buckets = [[] for i in range(10)]
+
+    for x in A:
+        if min is None or x < min:
+            min = x
+        if max is None or x > max:
+            max = x
+
+    if min == max:
+        return A
+
+    inter = (max-min)/10
+
+    for x in A:
+        for i in range(10):
+            if x <= min+(i+1)*inter:
+                buckets[i].append(x)
+                break
+
+    result = []
+    for b in buckets:
+        bs = bucketsort(b)
+        result.extend(bs)
+
+    return result
+
 if __name__ == '__main__':
     X = [1, 4, 9, 1, 2, 0, 7, 3, 7, 9, 10, 23, 93, 1, 32, 4, 46]
     Y = [4, 5, 3, 2, 3, 5, 4]
 
     pSorted = sorted(X)
     mSorted = mergesort(X)
+    bSorted = bucketsort(X)
     qSorted = X[:]
     quicksort(qSorted)
 
-    print(X)
+    print("original:", X)
     print(pSorted)
     print(mSorted)
     print(qSorted)
+    print(bSorted)
 
     pSorted = sorted(Y)
     mSorted = mergesort(Y)
+    bSorted = bucketsort(Y)
     qSorted = Y[:]
     quicksort(qSorted)
 
-    print(Y)
+    print("original:", Y)
     print(pSorted)
     print(mSorted)
     print(qSorted)
+    print(bSorted)
