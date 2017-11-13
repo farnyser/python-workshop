@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from patsy import dmatrices
 
 
@@ -70,7 +71,7 @@ def to_terminal(group, target_column):
     return max
 
 
-def node_split(node, target_column, max_depth=3, min_size=50, depth=1):
+def node_split(node, target_column, max_depth=3, min_size=50, depth=0):
     left, right = node['left'], node['right']
     del node['left']
     del node['right']
@@ -126,7 +127,7 @@ test_data = pd.read_csv("test.csv")
 # Cleanup training data
 fixup_with_median(df, 'Age')
 df = df.drop(['Ticket', 'Cabin'], axis=1)
-formula = 'Survived ~ C(Pclass) + C(Sex) + Age + SibSp  + C(Embarked)'
+formula = 'Survived ~ C(Pclass) + C(Sex) + Age + SibSp + Parch + C(Embarked)'
 y, x = dmatrices(formula, data=df, return_type='dataframe')
 z = x.join(y)
 z = z.drop('Intercept', axis=1)
@@ -135,12 +136,12 @@ z = z.drop('Intercept', axis=1)
 
 fixup_with_median(test_data, 'Age')
 test_data['Survived'] = 2
-formula_test = 'Survived ~ PassengerId + C(Pclass) + C(Sex) + Age + SibSp  + C(Embarked)'
+formula_test = 'Survived ~ PassengerId + C(Pclass) + C(Sex) + Age + SibSp + Parch + C(Embarked)'
 _, t = dmatrices(formula_test, data=test_data, return_type='dataframe')
 
 
 root = best_split(z, 'Survived')
-node_split(root, 'Survived')
+node_split(root, 'Survived', max_depth=4)
 
 print_tree(root)
 
