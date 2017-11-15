@@ -7,7 +7,7 @@ def dfs(graph, start, callback):
     stack = [start]
     while stack:
         current = stack.pop()
-        if seen.__contains__(current):
+        if current in seen:
             continue
         seen.add(current)
         for n in graph[current]:
@@ -21,12 +21,13 @@ def bfs(graph, start, callback):
     queue.append(start)
     while queue:
         current = queue.pop()
-        if seen.__contains__(current):
+        if current in seen:
             continue
         seen.add(current)
         for n in graph[current]:
             queue.appendleft(n)
         callback(current)
+
 
 if __name__ == '__main__':
     G = [
